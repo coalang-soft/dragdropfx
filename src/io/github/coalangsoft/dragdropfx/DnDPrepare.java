@@ -1,5 +1,12 @@
 package io.github.coalangsoft.dragdropfx;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.imageio.ImageIO;
+
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextInputControl;
@@ -69,6 +76,17 @@ public class DnDPrepare {
 				
 				ClipboardContent c = new ClipboardContent();
 				c.putImage(imageview.snapshot(null, null));
+				try {
+					File tmp = File.createTempFile("dndimg", ".png");
+					ImageIO.write(SwingFXUtils.fromFXImage(imageview.getImage(), null), "png", tmp);
+					c.putUrl(tmp.toURI().toURL().toExternalForm());
+					c.putFiles(Arrays.asList(tmp));
+					c.putString(tmp.toURI().toURL().toExternalForm());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				
 				db.setContent(c);
 			}
