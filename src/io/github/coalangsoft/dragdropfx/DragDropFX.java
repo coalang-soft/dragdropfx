@@ -6,10 +6,12 @@ import io.github.coalangsoft.lib.data.Func;
 import io.github.coalangsoft.visit.Visitor;
 import io.github.coalangsoft.visit.VisitorInfo;
 import io.github.coalangsoft.visitfx.ParentChildrenVisitor;
+import io.github.coalangsoft.visitfx.ScrollPaneContentVisitor;
 import io.github.coalangsoft.visitfx.TabPaneContentVisitor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.ImageView;
@@ -59,6 +61,7 @@ public class DragDropFX extends Visitor{
 				return null;
 			}
 		});
+		addFunction(ScrollPane.class, new ScrollPaneContentVisitor(this));
 		
 		ignore = new ArrayList<Class<?>>();
 	}
