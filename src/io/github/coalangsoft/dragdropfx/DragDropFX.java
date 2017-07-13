@@ -10,6 +10,7 @@ import io.github.coalangsoft.visitfx.ScrollPaneContentVisitor;
 import io.github.coalangsoft.visitfx.TabPaneContentVisitor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.chart.Chart;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
@@ -48,7 +49,16 @@ public class DragDropFX extends Visitor{
 			public Void call(Object p) {
 				if(isIgnored(p)){return null;}
 				ImageView c = (ImageView) p;
-				DnDPrepare.imageview(c);
+				DnDPrepare.gfx(c);
+				return null;
+			}
+		});
+		addFunction(Chart.class, new Func<Object, Void>(){
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				Chart c = (Chart) p;
+				DnDPrepare.gfx(c);
 				return null;
 			}
 		});

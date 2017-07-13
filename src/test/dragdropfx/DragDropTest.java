@@ -22,7 +22,6 @@ public class DragDropTest extends Application{
 		layout.getChildren().add(new ImageView("https://www.google.de/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"));
 		
 		new DragDropFX().handle(layout);
-		
 		s.setScene(new Scene(layout));
 		
 		s.show();

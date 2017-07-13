@@ -8,9 +8,10 @@ import javax.imageio.ImageIO;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -67,28 +68,13 @@ public class DnDPrepare {
 		});
 	}
 
-	static void imageview(final ImageView imageview) {
-		imageview.setOnDragDetected(new EventHandler<MouseEvent>() {
+	static void gfx(final Node n) {
+		n.setOnDragDetected(new EventHandler<MouseEvent>() {
 			
 			@Override
 			public void handle(MouseEvent e) {
-				Dragboard db = imageview.startDragAndDrop(TransferMode.ANY);
-				
-				ClipboardContent c = new ClipboardContent();
-				c.putImage(imageview.snapshot(null, null));
-				try {
-					File tmp = File.createTempFile("dndimg", ".png");
-					ImageIO.write(SwingFXUtils.fromFXImage(imageview.getImage(), null), "png", tmp);
-					c.putUrl(tmp.toURI().toURL().toExternalForm());
-					c.putFiles(Arrays.asList(tmp));
-					c.putString(tmp.toURI().toURL().toExternalForm());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				
-				db.setContent(c);
+				Dragboard db = n.startDragAndDrop(TransferMode.ANY);
+				db.setContent(image(n.snapshot(null, null)));
 			}
 			
 		});
@@ -104,17 +90,26 @@ public class DnDPrepare {
 					p.pause();
 				}
 				
-				Dragboard db = mediaview.startDragAndDrop(TransferMode.ANY);
-				
-				ClipboardContent c = new ClipboardContent();
-				c.putImage(mediaview.snapshot(null, null));
-				c.putUrl(p.getMedia().getSource());
-				c.putString(p.getMedia().getSource());
-				
-				db.setContent(c);
+				Dragboard db = mediaview.startDragAndDrop(TransferMode.ANY);				
+				db.setContent(image(mediaview.snapshot(null, null)));
 				
 			}
 		});
+	}
+	
+	static ClipboardContent image(Image i) {
+		ClipboardContent c = new ClipboardContent();
+		c.putImage(i);
+		try {
+			File f = File.createTempFile("snapshot", ".png");
+			ImageIO.write(SwingFXUtils.fromFXImage(i, null), "png", f);
+			c.putFiles(Arrays.asList(f));
+			c.putUrl(f.toURI().toURL().toExternalForm());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return c;
 	}
 
 }
