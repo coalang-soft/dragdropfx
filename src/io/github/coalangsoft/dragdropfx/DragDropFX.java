@@ -8,15 +8,21 @@ import io.github.coalangsoft.visit.VisitorInfo;
 import io.github.coalangsoft.visitfx.ParentChildrenVisitor;
 import io.github.coalangsoft.visitfx.ScrollPaneContentVisitor;
 import io.github.coalangsoft.visitfx.TabPaneContentVisitor;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaView;
+import javafx.util.Callback;
 
 @VisitorInfo(Node.class)
 public class DragDropFX extends Visitor{
@@ -68,6 +74,28 @@ public class DragDropFX extends Visitor{
 				if(isIgnored(p)){return null;}
 				MediaView c = (MediaView) p;
 				DnDPrepare.mediaview(c);
+				return null;
+			}
+		});
+		addFunction(TableView.class, new Func<Object, Void>(){
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				final TableView<?> t = (TableView<?>) p;
+				DnDPrepare.tableColumns(DragDropFX.this, t.getColumns());
+				t.getColumns().addListener(new ListChangeListener<TableColumn<?,?>>(){
+
+					@Override
+					public void onChanged(
+							javafx.collections.ListChangeListener.Change<? extends TableColumn<?, ?>> arg0) {
+						while(arg0.next()){
+							if(arg0.wasAdded()){
+								DnDPrepare.tableColumns(DragDropFX.this, arg0.getAddedSubList());
+							}
+						}
+					}
+					
+				});
 				return null;
 			}
 		});
