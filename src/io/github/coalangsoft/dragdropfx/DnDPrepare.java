@@ -36,7 +36,7 @@ import javafx.util.Callback;
 
 public class DnDPrepare {
 
-	static void labeled(final Labeled labeled) {
+	public static void labeled(final Labeled labeled) {
 		labeled.setOnDragDetected(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -52,7 +52,7 @@ public class DnDPrepare {
 		});
 	}
 
-	static void textinput(final TextInputControl textinput) {
+	public static void textinput(final TextInputControl textinput) {
 		textinput.setOnDragOver(new EventHandler<DragEvent>() {
 
 			@Override
@@ -60,20 +60,12 @@ public class DnDPrepare {
 				if(d.getDragboard().hasString()){
 					d.acceptTransferModes(TransferMode.ANY);
 					
-                    if(textinput instanceof TextField){
-                    	// position caret at drag coordinates 
-    					TextFieldSkin skin = (TextFieldSkin) textinput.getSkin();
-    					HitInfo mouseHit = skin.getIndex(d.getX(), d.getY());
-    					skin.positionCaret(mouseHit, false);
-    					int insertionPoint = mouseHit.getInsertionIndex();
-                    }if(textinput instanceof TextArea){
-                    	TextAreaSkin skin = (TextAreaSkin) textinput.getSkin();
-                    	HitInfo mouseHit = skin.getIndex(d.getX(), d.getY());
-                    	// Now you can position caret
-                    	skin.positionCaret(mouseHit, false, false);
-                    	// And/or get insertion index
-                    	int insertionPoint = mouseHit.getInsertionIndex();
-                    }
+					if(textinput.getSelection().getLength() == 0){
+						HitInfo info = DnDTextInput.getHitInfo(textinput, d);
+						if(info != null){
+							textinput.positionCaret(info.getInsertionIndex());
+						}
+					}
 				}
 				d.consume();
 			}
@@ -85,6 +77,10 @@ public class DnDPrepare {
 			public void handle(DragEvent d) {
 				Dragboard db = d.getDragboard();
 				if(db.hasString()){
+					int insertion = DnDTextInput.getHitInfo(textinput, d).getInsertionIndex();
+					if(!DnDTextInput.isInRange(insertion, textinput.getSelection())){
+						textinput.positionCaret(insertion);
+					}
 					if(textinput.getSelectedText().isEmpty()){
 						DnDTextInput.onCaretPosition(textinput, db);
 					}else{
@@ -94,9 +90,10 @@ public class DnDPrepare {
 			}
 			
 		});
+		new TextDragListenerContext(textinput).apply();
 	}
 
-	static void gfx(final Node n) {
+	public static void gfx(final Node n) {
 		n.setOnDragDetected(new EventHandler<MouseEvent>() {
 			
 			@Override
@@ -108,7 +105,7 @@ public class DnDPrepare {
 		});
 	}
 	
-	static void mediaview(final MediaView mediaview){
+	public static void mediaview(final MediaView mediaview){
 		mediaview.setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent arg0) {
@@ -125,7 +122,7 @@ public class DnDPrepare {
 		});
 	}
 	
-	static ClipboardContent image(Image i) {
+	public static ClipboardContent image(Image i) {
 		ClipboardContent c = new ClipboardContent();
 		c.putImage(i);
 		try {
@@ -140,7 +137,7 @@ public class DnDPrepare {
 		return c;
 	}
 
-	static void tableColumns(final Visitor v, List<? extends TableColumn<?, ?>> addedSubList) {
+	public static void tableColumns(final Visitor v, List<? extends TableColumn<?, ?>> addedSubList) {
 		for(int i = 0; i < addedSubList.size(); i++){
 			final TableColumn<?,?> col = addedSubList.get(i);
 			
