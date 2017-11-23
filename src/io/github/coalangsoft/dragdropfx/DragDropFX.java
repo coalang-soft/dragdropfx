@@ -20,6 +20,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaView;
 import javafx.util.Callback;
@@ -100,6 +101,24 @@ public class DragDropFX extends Visitor{
 			}
 		});
 		addFunction(ScrollPane.class, new ScrollPaneContentVisitor(this));
+		addFunction(TabPane.class, new Func<Object, Void>(){
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				TabPane c = (TabPane) p;
+				DnDPrepare.tabPane(c);
+				return null;
+			}
+		});
+		addFunction(ToolBar.class, new Func<Object, Void>(){
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				ToolBar c = (ToolBar) p;
+				DnDPrepare.toolBar(c);
+				return null;
+			}
+		});
 		
 		ignore = new ArrayList<Class<?>>();
 	}

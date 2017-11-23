@@ -7,28 +7,31 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.sun.javafx.scene.control.skin.TextAreaSkin;
-import com.sun.javafx.scene.control.skin.TextFieldSkin;
-import com.sun.javafx.scene.control.skin.TextInputControlSkin;
 import com.sun.javafx.scene.text.HitInfo;
 
 import io.github.coalangsoft.visit.Visitor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
@@ -36,6 +39,8 @@ import javafx.util.Callback;
 
 public class DnDPrepare {
 
+	private static final DnDTabPaneContext tabPaneContext = new DnDTabPaneContext();
+	
 	public static void labeled(final Labeled labeled) {
 		labeled.setOnDragDetected(new EventHandler<MouseEvent>() {
 
@@ -152,6 +157,51 @@ public class DnDPrepare {
 				}
 			});
 		}
+	}
+	
+	public static void tabPane(TabPane pane){
+		tabPaneContext.prepare(pane);
+	}
+	
+	public static void toolBar(ToolBar bar){
+		bar.setOnDragOver(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent event) {
+				if(event.getGestureSource() instanceof Button){
+					event.acceptTransferModes(TransferMode.ANY);
+				}
+			}
+		});
+		bar.setOnDragDropped(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent event) {
+				Button n = (Button) event.getGestureSource();
+				try{
+					Pane p = (Pane) n.getParent();
+					p.visibleProperty().addListener(new ChangeListener<Boolean>() {
+						@Override
+						public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+								Boolean newValue) {
+							System.out.println(p + " visible " + newValue);
+						}
+					});
+					p.getChildren().remove(n);
+					bar.getItems().add(n);
+					
+					EventHandler<ActionEvent> handler = n.getOnAction();
+					n.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							p.requestFocus();
+							if(p.isFocused()){
+								n.requestFocus();
+								handler.handle(event);
+							}
+						}
+					});
+				}catch(Exception e){}
+			}
+		});
 	}
 
 }
