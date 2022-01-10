@@ -1,7 +1,5 @@
 package io.github.coalangsoft.dragdropfx;
 
-import com.sun.javafx.scene.text.HitInfo;
-
 import javafx.event.EventHandler;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.TextInputControl;
@@ -10,6 +8,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.text.HitInfo;
 
 public class TextDragListenerContext {
 	

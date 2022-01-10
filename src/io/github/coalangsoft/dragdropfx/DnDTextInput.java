@@ -1,17 +1,15 @@
 package io.github.coalangsoft.dragdropfx;
 
-import com.sun.javafx.scene.control.skin.TextAreaSkin;
-import com.sun.javafx.scene.control.skin.TextFieldSkin;
-import com.sun.javafx.scene.text.HitInfo;
-
-import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.skin.TextAreaSkin;
+import javafx.scene.control.skin.TextFieldSkin;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.HitInfo;
 
 public class DnDTextInput {
 

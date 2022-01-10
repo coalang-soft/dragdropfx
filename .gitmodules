@@ -1,0 +1,9 @@
+[submodule "submodules/jvisitfx"]
+	path = submodules/jvisitfx
+	url = https://www.github.com/coalang-soft/jvisitfx
+[submodule "submodules/jvisit"]
+	path = submodules/jvisit
+	url = https://www.github.com/coalang-soft/jvisit
+[submodule "submodules/coalib-java"]
+	path = submodules/coalib-java
+	url = https://github.com/coalang-soft/coalib-java

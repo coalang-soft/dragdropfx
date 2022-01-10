@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DragDropTest extends Application{
+public class DragDropTest extends Application {
 
 	@Override
 	public void start(Stage s) throws Exception {
@@ -23,10 +23,6 @@ public class DragDropTest extends Application{
 		new DragDropFX().handle(a);
 		
 		s.show();
-	}
-	
-	public static void main(String[] args) {
-		launch(args);
 	}
 	
 }

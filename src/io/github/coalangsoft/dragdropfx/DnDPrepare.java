@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.sun.javafx.scene.text.HitInfo;
-
 import io.github.coalangsoft.visit.Visitor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.HitInfo;
 import javafx.util.Callback;
 
 public class DnDPrepare {
