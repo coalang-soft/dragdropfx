@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import io.github.coalangsoft.visit.Visitor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -206,6 +208,45 @@ public class DnDPrepare {
 				}catch(Exception e){}
 			}
 		});
+	}
+
+	/**
+	 * Prepares a list of nodes for drag and drop action.
+	 * A given Visitor (probably an instance of {@link DragDropFX}) is used to handle all the nodes in the list.
+	 * The visitor is called for any node that is in the list, as well as for any node that is added later.
+	 * @see #nodeList(Visitor, List) if do not want to react to newly added items
+	 *
+	 * @param visitor a visitor that can handle nodes
+	 * @param nodeList a list of nodes
+	 */
+	public static void modifiableNodeList(final Visitor visitor, ObservableList<? extends Node> nodeList) {
+		nodeList(visitor, nodeList);
+
+		//Listen for new items
+		nodeList.addListener(new ListChangeListener<Node>() {
+			@Override
+			public void onChanged(Change<? extends Node> change) {
+				while(change.next()) {
+					nodeList(visitor, change.getAddedSubList());
+				}
+			}
+		});
+	}
+
+	/**
+	 * Prepares a list of nodes for drag and drop action.
+	 * A given Visitor (probably an instance of {@link DragDropFX}) is used to handle all the nodes in the list.
+	 * The visitor is called for any node that is in the list, but not for any node that is added later.
+	 * @see #modifiableNodeList(Visitor, ObservableList) if you want to react to newly added items as well
+	 *
+	 * @param visitor a visitor that can handle nodes
+	 * @param nodeList a list of nodes
+	 */
+	public static void nodeList(final Visitor visitor, List<? extends Node> nodeList) {
+		//Go through all the nodes and visit them
+		for(int i = 0; i < nodeList.size(); i++) {
+			visitor.handle(nodeList.get(i));
+		}
 	}
 
 }

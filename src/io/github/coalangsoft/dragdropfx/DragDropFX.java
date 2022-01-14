@@ -13,16 +13,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaView;
+import javafx.stage.Window;
 import javafx.util.Callback;
 
 @VisitorInfo(Node.class)
@@ -31,8 +27,73 @@ public class DragDropFX extends Visitor{
 	private ArrayList<Class<?>> ignore;
 
 	{
+		addFunction(Window.class, new Func<Object, Void>() {
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				Window window = (Window) p;
+
+				//Handle the current content of the window, as well as new content
+				DragDropFX.this.handle(window.getScene());
+				window.sceneProperty().addListener((v,o,n) -> {
+					DragDropFX.this.handle(window.getScene());
+				});
+
+				return null;
+			}
+		});
+		addFunction(Scene.class, new Func<Object, Void>() {
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				Scene scene = (Scene) p;
+
+				//Handle the current content of the scene, as well as new content
+				DragDropFX.this.handle(scene.getRoot());
+				scene.rootProperty().addListener((v,o,n) -> {
+					DragDropFX.this.handle(n);
+				});
+
+				return null;
+			}
+		});
+		addFunction(Accordion.class, new Func<Object, Void>() {
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+
+				Accordion accordion = (Accordion) p;
+				DnDPrepare.modifiableNodeList(DragDropFX.this, accordion.getPanes());
+				return null;
+			}
+		});
 		addFunction(TabPane.class, new TabPaneContentVisitor(this));
-		addFunction(Parent.class, new ParentChildrenVisitor(this));
+		addFunction(Parent.class, new Func<Object, Void>() {
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				Parent parent = (Parent) p;
+
+				//Handle the current content of the parent, as well as new content
+				DnDPrepare.modifiableNodeList(DragDropFX.this, parent.getChildrenUnmodifiable());
+				return null;
+			}
+		});
+		addFunction(TitledPane.class, new Func<Object, Void>() {
+			@Override
+			public Void call(Object p) {
+				if(isIgnored(p)){return null;}
+				TitledPane pane = (TitledPane) p;
+
+				//Handle the current content of the titled pane, as well as new content
+				DragDropFX.this.handle(pane.getContent());
+				pane.contentProperty().addListener((v,o,n) -> {
+					if(n != null) DragDropFX.this.handle(n);
+				});
+
+				return null;
+			}
+		});
 		addFunction(TextInputControl.class, new Func<Object, Void>() {
 			@Override
 			public Void call(Object p) {
