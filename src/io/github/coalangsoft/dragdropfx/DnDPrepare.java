@@ -61,15 +61,16 @@ public class DnDPrepare {
 
 			@Override
 			public void handle(DragEvent d) {
-				if(d.getDragboard().hasString()){
+				if(DnDTextInput.accepts(d.getDragboard())){
 					d.acceptTransferModes(TransferMode.ANY);
-					
-					if(textinput.getSelection().getLength() == 0){
-						HitInfo info = DnDTextInput.getHitInfo(textinput, d);
-						if(info != null){
-							textinput.positionCaret(info.getInsertionIndex());
-						}
-					}
+
+//					if(textinput.getSelection().getLength() == 0){
+//						//Move the input position (caret) to where the mouse pointer is
+//						HitInfo info = DnDTextInput.getHitInfo(textinput, d);
+//						if(info != null){
+//							textinput.positionCaret(info.getInsertionIndex());
+//						}
+//					}
 				}
 				d.consume();
 			}
@@ -80,16 +81,20 @@ public class DnDPrepare {
 			@Override
 			public void handle(DragEvent d) {
 				Dragboard db = d.getDragboard();
-				if(db.hasString()){
-					int insertion = DnDTextInput.getHitInfo(textinput, d).getInsertionIndex();
-					if(!DnDTextInput.isInRange(insertion, textinput.getSelection())){
-						textinput.positionCaret(insertion);
-					}
-					if(textinput.getSelectedText().isEmpty()){
-						DnDTextInput.onCaretPosition(textinput, db);
-					}else{
-						DnDTextInput.onSelectedPosition(textinput, db);
-					}
+
+				//We do not need any if statements to figure out if the dragboard has contents - that is for "onDragOver".
+
+				//Move the input position (caret) to where the mouse pointer is
+				int insertion = DnDTextInput.getHitInfo(textinput, d).getInsertionIndex();
+				if(!DnDTextInput.isInRange(insertion, textinput.getSelection())){
+					textinput.positionCaret(insertion);
+				}
+
+				//Actually insert the content
+				if(textinput.getSelectedText().isEmpty()){
+					DnDTextInput.onCaretPosition(textinput, db);
+				}else{
+					DnDTextInput.onSelectedPosition(textinput, db);
 				}
 			}
 			

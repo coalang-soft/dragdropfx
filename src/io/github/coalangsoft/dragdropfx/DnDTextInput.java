@@ -16,7 +16,7 @@ public class DnDTextInput {
 	static void onCaretPosition(TextInputControl textinput,
 			Dragboard dragboard) {
 		int caret = textinput.getCaretPosition();
-		String insert = dragboard.getString();
+		String insert = convertToString(dragboard);
 		
 		String t1 = textinput.getText().substring(0, textinput.getCaretPosition());
 		String t2 = textinput.getText().substring(textinput.getCaretPosition(), textinput.getText().length());
@@ -29,7 +29,7 @@ public class DnDTextInput {
 		IndexRange selection = textinput.getSelection();
 		String t1 = textinput.getText().substring(0, selection.getStart());
 		String t2 = textinput.getText().substring(selection.getEnd(), textinput.getText().length());
-		textinput.setText(t1 + dragboard.getString() + t2);
+		textinput.setText(t1 + convertToString(dragboard) + t2);
 	}
 	
 	static HitInfo getHitInfo(TextInputControl textinput, MouseEvent d){
@@ -56,4 +56,31 @@ public class DnDTextInput {
 		return caret > range.getStart() && caret < range.getEnd();
 	}
 
+	/**
+	 * Returns true if {@link #convertToString(Dragboard)} can convert a given dragboard into a string.
+	 * This is primarily meant to figure out if a drag event should be accepted or not.
+	 * @param dragboard a dragboard
+	 * @return if the dragboard can be converted into a string
+	 */
+	public static boolean accepts(Dragboard dragboard) {
+		return dragboard.hasString() || dragboard.hasFiles() || dragboard.hasUrl();
+	}
+
+	/**
+	 * Converts dragboard contents into a string
+	 * @param dragboard a dragboard
+	 * @return a string representation of the dragboard contents; or null if no contents to work with were found
+	 * @see #accepts(Dragboard)
+	 */
+	public static String convertToString(Dragboard dragboard) {
+		if(dragboard.hasString()) {
+			return dragboard.getString();
+		} else if(dragboard.hasFiles()) {
+			return dragboard.getFiles().get(0).getAbsolutePath();
+		} else if(dragboard.hasUrl()) {
+			return dragboard.getUrl();
+		} else {
+			return null;
+		}
+	}
 }
