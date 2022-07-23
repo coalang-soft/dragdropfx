@@ -1,4 +1,4 @@
-module dragdropfx {
+module io.github.coalangsoft.dragdropfx {
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.media;
